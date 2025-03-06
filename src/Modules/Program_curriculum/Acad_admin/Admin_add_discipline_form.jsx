@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Checkbox,
+  MultiSelect,
   Button,
   Group,
   Text,
@@ -11,6 +11,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
 import { fetchAllProgrammes } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_add_discipline_form() {
   const form = useForm({
@@ -63,8 +64,7 @@ function Admin_add_discipline_form() {
     fetchData();
   }, []);
   const handleSubmit = async (values) => {
-    const apiUrl =
-      "http://127.0.0.1:8000/programme_curriculum/api/admin_add_discipline/";
+    const apiUrl = `${host}/programme_curriculum/api/admin_add_discipline/`;
 
     console.log("Form Values:", values);
 
@@ -83,6 +83,7 @@ function Admin_add_discipline_form() {
       });
 
       if (response.ok) {
+        localStorage.setItem("AdminDisciplineCachechange", "true");
         const data = await response.json();
         alert("Discipline added successfully!");
         console.log("Response Data:", data);
@@ -186,26 +187,21 @@ function Admin_add_discipline_form() {
 
                 <div>
                   {programmes.length > 0 ? (
-                    <Checkbox.Group
+                    <MultiSelect
                       id="linkedProgrammes"
                       value={form.values.linkedProgrammes}
+                      placeholder="Select Programmes"
                       onChange={(value) =>
                         form.setFieldValue("linkedProgrammes", value)
                       }
                       withAsterisk
-                      label="Link Programmes to this Discipline" // Add aria-label
-                    >
-                      <Group direction="column" spacing="sm">
-                        {programmes.map((programme) => (
-                          <Checkbox
-                            key={programme.id}
-                            value={programme.id.toString()}
-                            label={programme.name}
-                            id={`programme-${programme.id}`}
-                          />
-                        ))}
-                      </Group>
-                    </Checkbox.Group>
+                      label="Link Programmes to this Discipline"
+                      data={programmes.map((programme) => ({
+                        value: programme.id.toString(),
+                        label: programme.name,
+                      }))}
+                      searchable
+                    />
                   ) : (
                     <p style={{ color: "gray", fontStyle: "italic" }}>
                       No programmes available to be attached.

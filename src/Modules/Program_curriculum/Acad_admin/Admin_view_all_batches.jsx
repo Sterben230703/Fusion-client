@@ -12,6 +12,7 @@ import {
 import axios from "axios"; // Assuming axios is used for API calls
 import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
+import { host } from "../../../routes/globalRoutes";
 
 function AdminViewAllBatches() {
   const [activeTab, setActiveTab] = useState("Batches");
@@ -29,13 +30,15 @@ function AdminViewAllBatches() {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const cachedData = localStorage.getItem("batchesCache");
-        const timestamp = localStorage.getItem("batchesTimestamp");
+        const cachedData = localStorage.getItem("AdminBatchesCache");
+        const timestamp = localStorage.getItem("AdminBatchesTimestamp");
         const isCacheValid =
           timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        const cachedDatachange = localStorage.getItem(
+          "AdminBatchesCachechange",
+        );
         // 10 min cache
-
-        if (cachedData && isCacheValid) {
+        if (cachedData && isCacheValid && cachedDatachange === "false") {
           const data = JSON.parse(cachedData);
           setBatches(data.batches || []);
           setFinishedBatches(data.finished_batches || []);
@@ -44,7 +47,7 @@ function AdminViewAllBatches() {
           if (!token) throw new Error("Authorization token not found");
 
           const response = await axios.get(
-            "http://127.0.0.1:8000/programme_curriculum/api/admin_batches/",
+            `${host}/programme_curriculum/api/admin_batches/`,
             {
               headers: { Authorization: `Token ${token}` },
             },
@@ -53,8 +56,12 @@ function AdminViewAllBatches() {
           setBatches(response.data.batches || []);
           setFinishedBatches(response.data.finished_batches || []);
 
-          localStorage.setItem("batchesCache", JSON.stringify(response.data));
-          localStorage.setItem("batchesTimestamp", Date.now().toString());
+          localStorage.setItem("AdminBatchesCachechange", "false");
+          localStorage.setItem(
+            "AdminBatchesCache",
+            JSON.stringify(response.data),
+          );
+          localStorage.setItem("AdminBatchesTimestamp", Date.now().toString());
         }
       } catch (error) {
         console.error("Error fetching batch data:", error);
@@ -78,12 +85,17 @@ function AdminViewAllBatches() {
   const applyFilters = (data) => {
     return data.filter((batch) => {
       return (
-        batch.name.toLowerCase().includes(filter.name.toLowerCase()) &&
-        batch.discipline
-          .toLowerCase()
-          .includes(filter.discipline.toLowerCase()) &&
-        batch.year.toString().includes(filter.year) &&
-        batch.curriculum.toLowerCase().includes(filter.curriculum.toLowerCase())
+        (filter.name === "" ||
+          batch.name.toLowerCase().includes(filter.name.toLowerCase())) &&
+        (filter.discipline === "" ||
+          batch.discipline
+            .toLowerCase()
+            .includes(filter.discipline.toLowerCase())) &&
+        (filter.year === "" || batch.year.toString().includes(filter.year)) &&
+        (filter.curriculum === "" ||
+          batch.curriculum
+            .toLowerCase()
+            .includes(filter.curriculum.toLowerCase()))
       );
     });
   };
@@ -345,7 +357,7 @@ function AdminViewAllBatches() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="5">No batches found</td>
+                        <td colSpan="5">Loading</td>
                       </tr>
                     )}
                   </tbody>

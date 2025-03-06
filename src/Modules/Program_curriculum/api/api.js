@@ -1,6 +1,7 @@
 import axios from "axios";
+import { host } from "../../../routes/globalRoutes";
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = host;
 
 export const studentFetchSemesterData = async (id) => {
   try {
@@ -432,6 +433,18 @@ export const fetchBatchData = async (batch_id) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching program data: ", error);
+    throw error;
+  }
+};
+
+export const fetchFacultiesData = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_faculties/`,
+    );
+    return response.data.faculties;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
     throw error;
   }
 };

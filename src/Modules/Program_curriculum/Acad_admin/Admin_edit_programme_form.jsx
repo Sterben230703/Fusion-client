@@ -10,9 +10,10 @@ import {
   Container,
   Stack,
 } from "@mantine/core";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { fetchCurriculumData } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_programme_form() {
   const { id } = useParams();
@@ -68,7 +69,7 @@ function Admin_edit_programme_form() {
       };
       console.log("Edited Programme Data Submitted:", submitData);
       const response = await fetch(
-        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_programme/${id}/`,
+        `${host}/programme_curriculum/api/admin_edit_programme/${id}/`,
         {
           method: "POST",
           body: JSON.stringify(submitData),
@@ -76,6 +77,7 @@ function Admin_edit_programme_form() {
       );
       const result = await response.json();
       if (response.ok) {
+        localStorage.setItem("AdminProgrammesCachechange", "true");
         alert("Programme updated successfully!");
         console.log(response);
         navigate("/programme_curriculum/acad_view_all_programme");
@@ -196,12 +198,12 @@ function Admin_edit_programme_form() {
             }}
           >
             <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <a href="/programme_curriculum/acad_admin_add_curriculum_form">
+              <Link to="/programme_curriculum/acad_admin_add_curriculum_form">
                 <Button className="right-btn-programme">Add Curriculum</Button>
-              </a>
-              <a href="/programme_curriculum/acad_admin_add_discipline_form">
+              </Link>
+              <Link to="/programme_curriculum/acad_admin_add_discipline_form">
                 <Button className="right-btn-programme">Add Discipline</Button>
-              </a>
+              </Link>
             </Group>
           </div>
         </div>
