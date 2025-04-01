@@ -26,6 +26,11 @@ export default function Draft() {
   const [files, setFiles] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+
+  // New state for archive confirmation modal
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [selectedArchiveFile, setSelectedArchiveFile] = useState(null);
+
   const token = localStorage.getItem("authToken");
   const role = useSelector((state) => state.user.role);
   const username = useSelector((state) => state.user.roll_no);
@@ -60,24 +65,33 @@ export default function Draft() {
   const [editFile, setEditFile] = useState(null); // File being edited
 
   const handleArchive = async (fileID) => {
-    await axios.post(
-      `${createArchiveRoute}`,
-      { file_id: fileID },
-      {
-        params: {
-          username,
-          designation: role,
-          src_module: current_module,
+    try {
+      await axios.post(
+        `${createArchiveRoute}`,
+        { file_id: fileID },
+        {
+          params: {
+            username,
+            designation: role,
+            src_module: current_module,
+          },
+          withCredentials: true,
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
         },
-        withCredentials: true,
-        headers: {
-          Authorization: `Token ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      },
-    );
-    const updatedFiles = files.filter((file) => file.id !== fileID);
-    setFiles(updatedFiles);
+      );
+      const updatedFiles = files.filter((file) => file.id !== fileID);
+      setFiles(updatedFiles);
+      notifications.show({
+        title: "File archived",
+        message: "The file has been successfully archived",
+        color: "green",
+      });
+    } catch (err) {
+      console.error("Error archiving file:", err);
+    }
   };
 
   const handleDeleteFile = async (fileID) => {
@@ -95,7 +109,21 @@ export default function Draft() {
     });
   };
 
-  // Open the delete confirmation modal
+  // Archive modal functions
+  const openArchiveModal = (file) => {
+    setSelectedArchiveFile(file);
+    setShowArchiveModal(true);
+  };
+
+  const confirmArchive = () => {
+    if (selectedArchiveFile) {
+      handleArchive(selectedArchiveFile.id);
+      setShowArchiveModal(false);
+      setSelectedArchiveFile(null);
+    }
+  };
+
+  // Delete modal functions
   const openDeleteModal = (file) => {
     setSelectedFile(file);
     setShowDeleteModal(true);
@@ -259,7 +287,7 @@ export default function Draft() {
                         <ActionIcon
                           variant="light"
                           color="blue"
-                          onClick={() => handleArchive(file.id)}
+                          onClick={() => openArchiveModal(file)}
                           style={{
                             transition: "background-color 0.3s",
                             width: "2rem",
@@ -387,6 +415,47 @@ export default function Draft() {
         )}
       </Card>
 
+      {/* Archive Confirmation Modal */}
+      <Modal
+        opened={showArchiveModal}
+        onClose={() => setShowArchiveModal(false)}
+        title={
+          <Text align="center" weight={600} size="lg">
+            Confirm Archive
+          </Text>
+        }
+        centered
+      >
+        <Text weight={600} mb="ls">
+          Are you sure you want to archive this file?
+        </Text>
+        {selectedArchiveFile && (
+          <>
+            <Text mb="ls">
+              Subject: {selectedArchiveFile.file_extra_JSON.subject}
+            </Text>
+            <Text mb="md">File ID: #{selectedArchiveFile.id}</Text>
+          </>
+        )}
+        <Group justify="center" gap="xl" style={{ width: "100%" }}>
+          <Button
+            onClick={confirmArchive}
+            color="blue"
+            style={{ width: "120px" }}
+          >
+            Confirm
+          </Button>
+          <Button
+            onClick={() => setShowArchiveModal(false)}
+            variant="outline"
+            style={{ width: "120px" }}
+          >
+            Cancel
+          </Button>
+        </Group>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
       <Modal
         opened={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
@@ -406,7 +475,6 @@ export default function Draft() {
             <Text mb="md">File ID: #{selectedFile.id}</Text>
           </>
         )}
-        {/* Centered buttons with gap */}
         <Group justify="center" gap="xl" style={{ width: "100%" }}>
           <Button
             onClick={confirmDelete}

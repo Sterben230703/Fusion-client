@@ -8,6 +8,9 @@ import {
   Tooltip,
   TextInput,
   Group,
+  Modal,
+  Text,
+  Button,
 } from "@mantine/core";
 import {
   Archive,
@@ -18,6 +21,7 @@ import {
 } from "@phosphor-icons/react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { notifications } from "@mantine/notifications";
 import View from "./ViewFile";
 import {
   getFilesRoute,
@@ -34,6 +38,10 @@ export default function Inboxfunc() {
   const [searchQuery, setSearchQuery] = useState("");
   let current_module = useSelector((state) => state.module.current_module);
   current_module = current_module.split(" ").join("").toLowerCase();
+
+  // New state for archive confirmation modal
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [selectedArchiveFile, setSelectedArchiveFile] = useState(null);
 
   // Helper function to convert dates
   const convertDate = (date) => {
@@ -66,7 +74,6 @@ export default function Inboxfunc() {
     getFiles();
   }, [username, role, current_module, token]);
 
-  // Archive file handler
   const handleArchive = async (fileID) => {
     try {
       await axios.post(
@@ -81,14 +88,19 @@ export default function Inboxfunc() {
           withCredentials: true,
           headers: {
             Authorization: `Token ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         },
       );
-      // Remove archived file from the list
       const updatedFiles = files.filter((file) => file.id !== fileID);
       setFiles(updatedFiles);
-    } catch (error) {
-      console.error("Error archiving file:", error);
+      notifications.show({
+        title: "File archived",
+        message: "The file has been successfully archived",
+        color: "green",
+      });
+    } catch (err) {
+      console.error("Error archiving file:", err);
     }
   };
 
@@ -124,6 +136,20 @@ export default function Inboxfunc() {
   const handleMouseLeave = (e) => {
     e.currentTarget.style.backgroundColor =
       e.currentTarget.dataset.defaultColor;
+  };
+
+  // Archive modal functions
+  const openArchiveModal = (file) => {
+    setSelectedArchiveFile(file);
+    setShowArchiveModal(true);
+  };
+
+  const confirmArchive = () => {
+    if (selectedArchiveFile) {
+      handleArchive(selectedArchiveFile.id);
+      setShowArchiveModal(false);
+      setSelectedArchiveFile(null);
+    }
   };
 
   return (
@@ -268,7 +294,7 @@ export default function Inboxfunc() {
                         data-hover-color="#ffebee"
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
-                        onClick={() => handleArchive(file.id)}
+                        onClick={() => openArchiveModal(file)}
                       >
                         <Archive size="1rem" />
                       </ActionIcon>
@@ -360,6 +386,43 @@ export default function Inboxfunc() {
           </Table>
         </Box>
       )}
+      {/* Archive Confirmation Modal */}
+      <Modal
+        opened={showArchiveModal}
+        onClose={() => setShowArchiveModal(false)}
+        title={
+          <Text align="center" weight={600} size="lg">
+            Confirm Archive
+          </Text>
+        }
+        centered
+      >
+        <Text weight={600} mb="md">
+          Are you sure you want to archive this file?
+        </Text>
+        {selectedArchiveFile && (
+          <>
+            <Text mb="ls">Subject: {selectedArchiveFile.subject}</Text>
+            <Text mb="md">File ID: #{selectedArchiveFile.id}</Text>
+          </>
+        )}
+        <Group justify="center" gap="xl" style={{ width: "100%" }}>
+          <Button
+            onClick={confirmArchive}
+            color="blue"
+            style={{ width: "120px" }}
+          >
+            Confirm
+          </Button>
+          <Button
+            onClick={() => setShowArchiveModal(false)}
+            variant="outline"
+            style={{ width: "120px" }}
+          >
+            Cancel
+          </Button>
+        </Group>
+      </Modal>
     </Card>
   );
 }
