@@ -1,0 +1,25 @@
+# pack-refs with: peeled fully-peeled sorted 
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/ac-1
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/ac-2
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/ac-3
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/ac-4
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/ac-6
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/ac-7
+0cdc5b990c3e55bae317f483af2cebb428945d2c refs/remotes/origin/acad-main
+e22b6ba85794796f84b4b286914b31c621f27c89 refs/remotes/origin/dashboard_client
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/gad-1
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/gad-2
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/gad-3
+4c9d8067b917d48669fd0bdd5da8dadd3c9bdb1d refs/remotes/origin/gad-4
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/gad-5
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/gad-6
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/gad-7
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/inventory_management
+dc4903a8a2dd8c7b8cfa73938d7445a181457b3f refs/remotes/origin/main
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/os-1
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/os-2
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/os-3
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/sa-1
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/sa-2
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/sa-3
+5cf86e3fc525b3b734449ee66aea88b2d05ae6a8 refs/remotes/origin/sa-4

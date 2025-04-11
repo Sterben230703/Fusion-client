@@ -1,0 +1,31 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+	hooksPath = .husky
+[remote "origin"]
+	url = https://github.com/Sterben230703/Fusion-client.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+	vscode-merge-base = origin/main
+	github-pr-owner-number = "FusionIIIT#Fusion-client#56"
+	github-pr-owner-number = "FusionIIIT#Fusion-client#56"
+	github-pr-owner-number = "FusionIIIT#Fusion-client#56"
+	github-pr-owner-number = "FusionIIIT#Fusion-client#56"
+	github-pr-owner-number = "FusionIIIT#Fusion-client#56"
+[remote "upstream"]
+	url = https://github.com/FusionIIIT/Fusion-client.git
+	fetch = +refs/heads/*:refs/remotes/upstream/*
+[branch "dashboard_client"]
+	remote = origin
+	merge = refs/heads/dashboard_client
+	vscode-merge-base = origin/dashboard_client
+[branch "gad-4"]
+	remote = origin
+	merge = refs/heads/gad-4
+	vscode-merge-base = origin/gad-4
